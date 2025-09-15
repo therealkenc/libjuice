@@ -58,7 +58,7 @@ static socket_t create_socket_for_addrinfo(const udp_socket_config_t *config,
 	if (ai->ai_family == AF_INET6)
 		setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (const char *)&disabled, sizeof(disabled));
 
-		// Set DF flag
+	// Set DF flag
 #ifndef NO_PMTUDISC
 	const sockopt_t val = IP_PMTUDISC_DO;
 	setsockopt(sock, IPPROTO_IP, IP_MTU_DISCOVER, (const char *)&val, sizeof(val));
@@ -521,7 +521,7 @@ int udp_get_addrs(socket_t sock, addr_record_t *records, size_t count) {
 
 	for (struct ifaddrs *ifa = ifas; ifa; ifa = ifa->ifa_next) {
 		unsigned int flags = ifa->ifa_flags;
-		if (!(flags & IFF_UP) || (flags & IFF_LOOPBACK))
+		if (!(flags & IFF_UP) || !(flags & IFF_RUNNING) || (flags & IFF_LOOPBACK))
 			continue;
 		if (strcmp(ifa->ifa_name, "docker0") == 0)
 			continue;
